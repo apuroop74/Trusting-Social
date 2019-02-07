@@ -55,7 +55,7 @@ public class Slot
 				validSession = true;
 			}
 		} else {
-			if (totalTime == max) {
+			if (totalTime <= max) {
 				validSession = true;
 			}
 		}

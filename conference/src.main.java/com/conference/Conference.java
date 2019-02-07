@@ -168,14 +168,25 @@ public class Conference
 						+ " " + event.getName() + "\n";
 				localDateTime = localDateTime.plusMinutes(event.getDuration());
 			}
-			out += formater
-					.format(Date.from(localDateTime
-							.atZone(ZoneId.systemDefault()).toInstant()))
-					+ " Lunch" + "\n";
-			localDateTime = localDateTime.plusMinutes(60);
-
+			
+			Date lunch_date = new Date();
+			lunch_date.setHours(12);
+			lunch_date.setMinutes(0);
+			LocalDateTime lunch_time = lunch_date.toInstant()
+					.atZone(ZoneId.systemDefault()).toLocalDateTime();
+			
+			if(localDateTime!=lunch_time)
+			{
+				out += formater
+						.format(Date.from(localDateTime
+								.atZone(ZoneId.systemDefault()).toInstant())) + " till 12:00 PM : Empty \n";
+			}
+			
+			out += "12:00 PM Lunch" + "\n";
 			// to handle cases where morning session has extra session and no
 			// evening session
+			localDateTime = localDateTime.plusMinutes(60);
+			
 			try {
 				for (Event event : evenEvents.get(day)) {
 					out += formater
@@ -186,6 +197,22 @@ public class Conference
 					localDateTime = localDateTime
 							.plusMinutes(event.getDuration());
 				}
+				
+				Date eve_date = new Date();
+				eve_date.setHours(16);
+				eve_date.setMinutes(0);
+				LocalDateTime eve_time = eve_date.toInstant()
+						.atZone(ZoneId.systemDefault()).toLocalDateTime();
+				
+				if(localDateTime!=eve_time)
+				{
+					out += formater
+							.format(Date.from(localDateTime
+									.atZone(ZoneId.systemDefault()).toInstant())) + " till 4:00 PM : Empty \n";
+				}
+				
+				localDateTime=eve_time.minusMinutes(1);
+				
 			} catch (Exception e) {
 			}
 			// if evening event finishes before 4PM Network event at 4PM
@@ -211,7 +238,7 @@ public class Conference
 	{
 		try {
 			Conference c = new Conference();
-			List<Event> events = c.readInput("testFiles/test1.txt");
+			List<Event> events = c.readInput("testFiles/test2.txt");
 			if (events != null && !events.isEmpty()) {
 				Map<String, List<List<Event>>> schedules = c.schedule(events);
 				c.printResults(schedules);
